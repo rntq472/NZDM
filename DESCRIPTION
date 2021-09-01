@@ -1,0 +1,23 @@
+Package: NZDM
+Title: Download Data from the New Zealand Debt Management Website
+Version: 1.0.0
+Authors@R: 
+    person(given = "Jasper",
+           family = "Watson",
+           role = c("aut", "cre"),
+           email = "jasper.g.watson@gmail.com")
+Description: Retrieves data from <https://debtmanagement.treasury.govt.nz/investor-resources/data> by downloading spreadsheets and reading them into R. Data available includes issuance numbers and history of New Zealand Government Bonds, Treasury Bills, Inflation-indexed bonds, and European Commercial Paper.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Depends: R (>= 3.5.0)
+Imports:
+    httr,
+    readxl,
+    rvest,
+    xml2
+Suggests:
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
