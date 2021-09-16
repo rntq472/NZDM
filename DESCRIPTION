@@ -1,6 +1,6 @@
 Package: NZDM
 Title: Download Data from the New Zealand Debt Management Website
-Version: 1.0.0
+Version: 1.0.0.9000
 Authors@R: 
     person(given = "Jasper",
            family = "Watson",

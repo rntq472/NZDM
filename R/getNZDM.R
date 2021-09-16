@@ -158,20 +158,6 @@ getNZDM <- function(x, destDir = NULL, quiet = TRUE,
         
     }
     
-    skip <- switch(x,
-                   gbtenderhistory = c(4),
-                   gbonissuehistory = c(5, 1, 0),
-                   gbonissue = c(4),
-                   gbsyndication = c(4, 4, 3, 3, 3, 3, 3, 3, 3),
-                   gbrepurchases = c(7),
-                   tbtenderhistory = c(4),
-                   tbonissue = c(3),
-                   tbonissuehistory = c(4, 1),
-                   ecponissue = c(4),
-                   iibfactors = c(2, 2, 2, 2),
-                   nmihistory = c(7)
-                   )
-    
     Foo <- try({
         sheets <- excel_sheets(destfile)
     }, silent = TRUE)
@@ -184,6 +170,8 @@ getNZDM <- function(x, destDir = NULL, quiet = TRUE,
                   xls = readxl::read_xls,
                   xlsx = readxl::read_xlsx
                   )
+
+    skip <- getSkipValue(x, destfile, sheets, FUN)
     
     Foo <- try({
         out <- lapply(seq_along(sheets), function(ii){
