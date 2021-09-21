@@ -286,14 +286,19 @@ getNZDM <- function(x, destDir = NULL, quiet = TRUE,
                                          origin = '1899-12-30')
         
     } else if (x == 'gbsyndication'){
+
+        ## TODO: Aggregate the sheets
         
     } else if (x == 'gbrepurchases'){
         
     } else if (x == 'tbtenderhistory'){
         
     } else if (x == 'tbonissue'){
-        
-        out <- out[-1, ]
+
+        tmp <- which(!is.na(out$Maturity))[1]
+
+        if (tmp > 1)
+            out <- out[-(seq_len(tmp - 1)), ]
         
     } else if (x == 'tbonissuehistory'){
         
@@ -352,6 +357,8 @@ getNZDM <- function(x, destDir = NULL, quiet = TRUE,
                                       origin = '1899-12-30')
         
     } else if (x == 'iibfactors'){
+        
+        ## TODO: Aggregate the sheets
         
     } else if (x == 'nmihistory'){
         
