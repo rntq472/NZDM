@@ -286,8 +286,73 @@ getNZDM <- function(x, destDir = NULL, quiet = TRUE,
                                          origin = '1899-12-30')
         
     } else if (x == 'gbsyndication'){
+        
+        for (cc in c('Asia', 'Australia', 'Europe_UK', 'New_Zealand', 'North_America', 'Other', 'Asset_Manager_Central_Bank', 'Bank_Balance_Sheet', 'Bank_Trading_Book', 'Hedge_Fund'))
+            out[[1]][[cc]] <- NA
+        
+        for (ii in grep('^\\d{4}$', sheets) ){
 
-        ## TODO: Aggregate the sheets
+            tmp <- rep(Sys.Date(), 3)
+            tmp[1] <- as.Date(as.numeric(out[[ii]][1, 1]), origin = '1899-12-30')
+            tmp[2] <- as.Date(as.numeric(out[[ii]][1, 2]), origin = '1899-12-30')
+            tmp[3] <- out[[ii]][1, 3]
+            
+            loc <- sapply(1:nrow(out[[1]]), function(z){
+
+                oo <- as.Date(c(out[[1]][z, 1], out[[1]][z, 2], out[[1]][z, 3]))
+                all(oo == tmp)
+
+            })
+
+            if (sum(loc) == 1){
+
+                out[[1]][loc, 'Asia'] <- out[[ii]][grepl('Asia', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'Australia'] <- out[[ii]][grepl('Australia', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'Europe_UK'] <- out[[ii]][grepl('Europe', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'New_Zealand'] <- out[[ii]][grepl('New.*Zealand', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'North_America'] <- out[[ii]][grepl('North.*America', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'Other'] <- out[[ii]][grepl('Other', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'Asset_Manager_Central_Bank'] <- out[[ii]][grepl('Asset.*Manager.*Central.*Bank', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'Bank_Balance_Sheet'] <- out[[ii]][grepl('Bank.*Balance.*Sheet', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'Bank_Trading_Book'] <- out[[ii]][grepl('Bank.*Trading.*Book', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[1]][loc, 'Hedge_Fund'] <- out[[ii]][grepl('Hedge.*Fund', out[[ii]][, 1], ignore.case = TRUE), 2]
+
+            } 
+            
+        }
+
+        for (ii in grep('^\\d{4}[[:space:]]*Tap$', sheets) ){
+
+            tmp <- rep(Sys.Date(), 3)
+            tmp[1] <- as.Date(as.numeric(out[[ii]][1, 1]), origin = '1899-12-30')
+            tmp[2] <- as.Date(as.numeric(out[[ii]][1, 2]), origin = '1899-12-30')
+            tmp[3] <- out[[ii]][1, 3]
+            
+            loc <- sapply(1:nrow(out[[2]]), function(z){
+
+                oo <- as.Date(c(out[[2]][z, 1], out[[2]][z, 2], out[[2]][z, 3]))
+                all(oo == tmp)
+
+            })
+
+            if (sum(loc) == 1){
+
+                out[[2]][loc, 'Asia'] <- out[[ii]][grepl('Asia', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'Australia'] <- out[[ii]][grepl('Australia', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'Europe_UK'] <- out[[ii]][grepl('Europe', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'New_Zealand'] <- out[[ii]][grepl('New.*Zealand', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'North_America'] <- out[[ii]][grepl('North.*America', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'Other'] <- out[[ii]][grepl('Other', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'Asset_Manager_Central_Bank'] <- out[[ii]][grepl('Asset.*Manager.*Central.*Bank', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'Bank_Balance_Sheet'] <- out[[ii]][grepl('Bank.*Balance.*Sheet', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'Bank_Trading_Book'] <- out[[ii]][grepl('Bank.*Trading.*Book', out[[ii]][, 1], ignore.case = TRUE), 2]
+                out[[2]][loc, 'Hedge_Fund'] <- out[[ii]][grepl('Hedge.*Fund', out[[ii]][, 1], ignore.case = TRUE), 2]
+
+            } 
+            
+        }
+
+        out <- out[1:2]
         
     } else if (x == 'gbrepurchases'){
         
@@ -358,7 +423,15 @@ getNZDM <- function(x, destDir = NULL, quiet = TRUE,
         
     } else if (x == 'iibfactors'){
         
-        ## TODO: Aggregate the sheets
+        for (ii in seq_along(out) ){
+
+            out[[ii]]$Bond <- gsub('[[:space:]]*IIB[[:space:]]*Factors', '', sheets[ii])
+            out[[ii]] <- out[[ii]][, c(4, 1:3)]
+
+        }
+
+        out <- do.call(rbind.data.frame, out)
+        sheets <- sheets[1]
         
     } else if (x == 'nmihistory'){
         
@@ -367,6 +440,13 @@ getNZDM <- function(x, destDir = NULL, quiet = TRUE,
         
         out <- out[!is.na(out[, 1]), ]
         
+    }
+
+    if (length(sheets) == 1){
+        rownames(out) <- NULL
+    } else {
+        for (ii in seq_along(out))
+            rownames(out[[ii]]) <- NULL
     }
     
     out
